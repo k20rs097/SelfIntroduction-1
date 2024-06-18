@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct PopupView: View {
-    @Binding var Present: Bool
+    enum Constants {
+        static let bounds = UIScreen.main.bounds
+        static let width = CGFloat(bounds.width)
+        static let height = CGFloat(bounds.height)
+    }
+    @Binding var isPresent: Bool
     
     var body: some View {
         ZStack{
@@ -17,76 +22,56 @@ struct PopupView: View {
                 .onTapGesture {
                     // ポップアップ以外の背景をタップしたらポップアップを閉じる
                     withAnimation {
-                        Present = false
+                        isPresent = false
                     }
                 }
             VStack(spacing: 12) {
-                
                 HStack{
                     Spacer()
                     Button(action: {
                         withAnimation {
-                            Present = false
+                            isPresent = false
                         }
                     }, label: {
                         Image(systemName: "xmark.circle")
                             .font(.largeTitle)
                             .foregroundColor(.red)
                     })
-
                 }
                 
-                Text("Difficulty Level")
+                Text("Difficulty")
                     .font(.largeTitle)
-                
-                
-//                Image("face")
-//                    .resizable()
-//                    .frame(width: 80, height: 80)
                 NavigationLink(destination: Game2View(size: 1024)) {
-                    Text("easy")
-                        .frame(width:256)
-                        .font(.largeTitle)
-                        .foregroundStyle(.gray)
-                        .padding()
-                        .background(.green, in: RoundedRectangle(cornerRadius: 8))//背景の形と色を決めている
-                        .font(.largeTitle)//文字のサイズ
-                    
+                    NavigationButton("easy", Color.green)
                 }
                 NavigationLink(destination: Game2View(size: 256)) {
-                    Text("normal")
-                        .frame(width:256)
-                        .font(.largeTitle)
-                        .foregroundStyle(.gray)
-                        .padding()
-                        .background(.yellow, in: RoundedRectangle(cornerRadius: 8))//背景の形と色を決めている
-                        .font(.largeTitle)//文字のサイズ
+                    NavigationButton("normal", Color.yellow)
                 }
                 NavigationLink(destination: Game2View(size: 64)) {
-                    Text("hard")
-                        .frame(width:256)
-                        .font(.largeTitle)
-                        .foregroundStyle(.gray)
-                        .padding()
-                        .background(.red, in: RoundedRectangle(cornerRadius: 8))//背景の形と色を決めている
-                        .font(.largeTitle)//文字のサイズ
-                    
+                    NavigationButton("hard", Color.red)
                 }
-                
-                
-                
             }
-            .frame(width: 280, alignment: .center)
+            .frame(width: Constants.width * 0.8, alignment: .center)
             .padding()
             .background(Color.white)
             .cornerRadius(12)
         }
+    }
+    
+    private func NavigationButton(_ difficulty: String, _ color: Color) -> some View {
+        Text(difficulty)
+            .frame(width: Constants.width * 0.65)
+            .font(.largeTitle)
+            .foregroundStyle(.gray)
+            .padding()
+            .background(color, in: RoundedRectangle(cornerRadius: 8))//背景の形と色を決めている
+            .font(.largeTitle)//文字のサイズ
     }
 }
 
 
 struct PopupView_Previews: PreviewProvider {
     static var previews: some View {
-        PopupView(Present: .constant(true))
+        PopupView(isPresent: .constant(true))
     }
 }

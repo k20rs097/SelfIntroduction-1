@@ -48,7 +48,7 @@ struct GameTitleView: View {
                     })
                 }
                 if showingPopUp {
-                    PopupView(Present: $showingPopUp)
+                    PopupView(isPresent: $showingPopUp)
                         
                 }
             }
