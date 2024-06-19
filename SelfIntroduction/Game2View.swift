@@ -26,9 +26,11 @@ struct Game2View: View {
     
     var body: some View {
         GeometryReader {geometry in
+            let faceImageViewWidth = getScreenWidth(geometry)
+            let faceImageViewHeight = getScreenHeight(geometry)
             ZStack{
                 faceImageView(x: $x, y: $y, score: $score, isTimerRunning: $isTimerRunning, player: $player, size: size)
-                    .frame(height: geometry.size.height * 0.7)
+                    .frame(height: faceImageViewHeight)
                 VStack{
                     Text("score:\(score)")
                     Text("\(remainingSeconds)")
@@ -37,8 +39,8 @@ struct Game2View: View {
                     Spacer()
                     Button(action: {
                         if remainingSeconds <= 0 {
-                            _init(geometry.size.width
-                                  , geometry.size.height * 0.7)
+                            _init(faceImageViewWidth
+                                  , faceImageViewHeight)
                         } else if remainingSeconds == 10 {
                             isTimerRunning.toggle()
                         }
@@ -62,6 +64,14 @@ struct Game2View: View {
 //                    .font(.largeTitle)
             }
         }
+    }
+    
+    private func getScreenWidth(_ geometry: GeometryProxy) -> CGFloat {
+        return geometry.size.width
+    }
+    
+    private func getScreenHeight(_ geometry: GeometryProxy) -> CGFloat {
+        return geometry.size.height * 0.7
     }
     
     private func _init(_ faceImageViewWidth: CGFloat, _ faceImageViewHeight: CGFloat) {
