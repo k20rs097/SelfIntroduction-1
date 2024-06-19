@@ -17,13 +17,18 @@ struct Game2View: View {
     @State private var isTimerRunning = false
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var player: AVAudioPlayer?
-
+    
+    enum Constants {
+        static let bounds = UIScreen.main.bounds
+        static let width = CGFloat(bounds.width)
+        static let height = CGFloat(bounds.height)
+    }
+    
     var body: some View {
         GeometryReader {geometry in
             ZStack{
                 faceImageView(x: $x, y: $y, score: $score, isTimerRunning: $isTimerRunning, player: $player, size: size)
-                    .frame(height:geometry.size.height * 0.7)
-
+                    .frame(height: geometry.size.height * 0.7)
                 VStack{
                     Text("score:\(score)")
                     Text("\(remainingSeconds)")
@@ -31,11 +36,10 @@ struct Game2View: View {
                         .padding()
                     Spacer()
                     Button(action: {
-                        if remainingSeconds == 0   {
-                            score = 0
-                            remainingSeconds = 10
-                        }else if remainingSeconds == 10{
-                            
+                        if remainingSeconds <= 0 {
+                            _init(geometry.size.width
+                                  , geometry.size.height * 0.7)
+                        } else if remainingSeconds == 10 {
                             isTimerRunning.toggle()
                         }
                     }) {
@@ -52,8 +56,19 @@ struct Game2View: View {
                         }
                     }
                 }
+//                Text("・")
+//                    .position(CGPoint(x: Constants.width/2, y: Constants.height/2))
+//                    .foregroundStyle(.blue)
+//                    .font(.largeTitle)
             }
         }
+    }
+    
+    private func _init(_ faceImageViewWidth: CGFloat, _ faceImageViewHeight: CGFloat) {
+        x = faceImageViewWidth / 2
+        y = faceImageViewHeight / 2
+        remainingSeconds = 10
+        score = 0
     }
     
     struct faceImageView: View {
@@ -73,8 +88,14 @@ struct Game2View: View {
                     .frame(width: size)
                     .position(x: x, y: y)
                     .onAppear() {
-                        x = geometry2.frame(in: .local).maxX / 2
-                        y = geometry2.frame(in: .local).maxY / 2
+//                        x = geometry2.frame(in: .global).maxX / 2
+//                        y = geometry2.frame(in: .global).maxY / 2
+                        x = geometry2.size.width / 2
+                        y = geometry2.size.height / 2
+                        print("onAppeared")
+                        print("x: \(x), y: \(y)")
+                        print("geometry2.frame(in: .global): \(geometry2.frame(in: .global).maxY)")
+                        print("geometry2.frame(in: .local): \(geometry2.frame(in: .local).maxY)")
                     }
                     .onTapGesture {
                         if isTimerRunning {
@@ -88,7 +109,6 @@ struct Game2View: View {
                     }
             }
         }
-        
         private func playSound(_ audioName: String) {
             guard let url = Bundle.main.url(forResource: audioName, withExtension: "mp3") else { return }
             do {
